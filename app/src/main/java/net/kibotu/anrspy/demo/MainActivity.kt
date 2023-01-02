@@ -16,14 +16,15 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import net.kibotu.anrspy.demo.theme.AppTheme
+import net.kibotu.anrspy.startSpying
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        val TAG = "ANR Spy"
+        const val TAG = "ANR Spy"
     }
 
-    lateinit var receiver: AirPlanMode
+    private lateinit var receiver: AirPlanMode
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,45 +68,19 @@ class MainActivity : AppCompatActivity() {
             registerReceiver(receiver, it)
         }
 
-//        val anrSpyAgent = ANRSpyAgent.Builder()
-//            .setSpyListener(object : ANRSpyListener {
-//                override fun onWait(ms: Long) {
-//                    //Log.e(TAG,"Waited: $ms")
-//                }
-//
-//                override fun onAnrStackTrace(stacksTrace: Array<StackTraceElement>) {
-//                    Log.e(TAG, "Stack:\n $stacksTrace")
-//                }
-//
-//                override fun onAnrDetected(details: String, stackTrace: Array<StackTraceElement>) {
-//                    Log.e(TAG, details)
-//                    Log.e(TAG, "$stackTrace")
-//                }
-//            })
-//            .setThrowException(true)
-//            .setTimeOut(5000)
-//            .build()
-//        anrSpyAgent.start()
+        startSpying {
 
-//        startSpying {
-//
-//            throwException = true
-//            timeout = 5000L
-//
-//            onWait {
-//                //Log.e(TAG,"Waited: $ms")
-//            }
-//
-//            ononAnrStackTrace {
-//                Log.e(TAG, "Stack:\n $stacksTrace")
-//            }
-//
-//            onAnrDetected {
-//                Log.e(TAG, details)
-//                Log.e(TAG, "$stackTrace")
-//            }
-//        }
+            shouldThrowException = true
+            timeout = 5000L
 
+            onWait {
+                Log.e(TAG, "Waited: $it")
+            }
+
+            onAnrDetected {
+                Log.e(TAG, "$it")
+            }
+        }
     }
 
     override fun onDestroy() {

@@ -3,68 +3,70 @@ package net.kibotu.anrspy
 import android.os.Handler
 import android.os.Looper
 
-class ANRSpyAgent constructor(builder: Builder) : Thread() {
+class ANRSpyAgent(
+    private var shouldThrowException: Boolean = false,
+    private var timeout: Long = 5000L,
+    private val interval: Long = 500L,
+    private val handler: Handler = Handler(Looper.getMainLooper()),
+    private var timeWaited: Long = 0L,
+    private var onWait: ((ms: Long) -> Unit)? = null,
+    private var onAnrDetected: ((exception: ANRSpyException) -> Unit)? = null
+) : Thread() {
 
-    private var listener: ANRSpyListener? = builder.getSpyListener()
-
-    private var shouldThrowException: Boolean = builder.getThrowException()
-
-    private var timeout = builder.getTimeOut()
-
-    private val interval = 500L
-
-    private val handler = Handler(Looper.getMainLooper())
-
-    private var timeWaited = 0L
-
-    private val testerWorker = Runnable {
-        timeWaited = 0L
-    }
-
-    class Builder {
-
-        //Params
-        private var listener: ANRSpyListener? = null
-
-        private var shouldThrowException: Boolean = true
-
-        private var timeout = 5000L
-
-        fun setSpyListener(listener: ANRSpyListener) = apply { this.listener = listener }
-
-        fun getSpyListener() = listener
-
-        fun setThrowException(throwException: Boolean) =
-            apply { shouldThrowException = throwException }
-
-        fun getThrowException() = shouldThrowException
-
-        fun setTimeOut(timeout: Long) = apply { this.timeout = timeout }
-
-        fun getTimeOut() = timeout
-
-        fun build(): ANRSpyAgent = ANRSpyAgent(this)
-    }
-    //End builder
+    private val testerWorker: Runnable = Runnable { timeWaited = 0L }
 
     override fun run() {
         while (!isInterrupted) {
             timeWaited += interval
-            listener?.onWait(timeWaited)
+            onWait?.invoke(timeWaited)
             handler.post(testerWorker)
             sleep(interval)
             if (timeWaited > timeout) {
-                listener?.onAnrDetected(
-                    "$[ANR Spy] Main thread blocked for: $timeWaited ms",
+                val exception = ANRSpyException(
+                    "Application Not Responding for at least $timeWaited ms.",
                     Looper.getMainLooper().thread.stackTrace
                 )
+                onAnrDetected?.invoke(exception)
                 if (shouldThrowException) {
-                    throw ANRSpyException(
-                        "Application Not Responding for at least $timeWaited ms.",
-                        Looper.getMainLooper().thread.stackTrace
-                    )
+                    throw exception
                 }
             }
         }
     }
+
+    // region Builder
+
+    class Builder {
+
+        var shouldThrowException: Boolean = true
+
+        var timeout = 5000L
+
+        private var onWait: ((ms: Long) -> Unit)? = null
+
+        private var onAnrDetected: ((exception: ANRSpyException) -> Unit)? =
+            null
+
+        fun onWait(block: ((ms: Long) -> Unit)? = null) {
+            onWait = block
+        }
+
+        fun onAnrDetected(block: ((exception: ANRSpyException) -> Unit)? = null) {
+            onAnrDetected = block
+        }
+
+        fun build(): ANRSpyAgent = ANRSpyAgent(
+            shouldThrowException = shouldThrowException,
+            timeout = timeout
+        )
+    }
+
+    // endregion
+}
+
+fun startSpying(update: ANRSpyAgent.Builder.() -> Unit) {
+    val builder = ANRSpyAgent.Builder()
+    builder.update()
+    val thread = builder.build()
+    thread.start()
 }
