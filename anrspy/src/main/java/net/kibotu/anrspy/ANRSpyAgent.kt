@@ -59,7 +59,10 @@ class ANRSpyAgent constructor(builder: Builder) : Thread() {
                     Looper.getMainLooper().thread.stackTrace
                 )
                 if (shouldThrowException) {
-                    throw ANRSpyException("Application Not Responding for at least $timeWaited ms.", Looper.getMainLooper().thread.stackTrace)
+                    throw ANRSpyException(
+                        "Application Not Responding for at least $timeWaited ms.",
+                        Looper.getMainLooper().thread.stackTrace
+                    )
                 }
             }
         }
