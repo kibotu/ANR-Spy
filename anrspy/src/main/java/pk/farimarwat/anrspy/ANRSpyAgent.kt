@@ -1,13 +1,13 @@
-package pk.farimarwat.AnrSpy
+package pk.farimarwat.anrspy
 
 import android.os.Handler
 import android.os.Looper
 
-class ANRSpyAgent constructor(builder:Builder): Thread() {
+class ANRSpyAgent constructor(builder: Builder) : Thread() {
 
     //Params
-    private var mListener:ANRSpyListener? = null
-    private var mShouldThrowException:Boolean = true
+    private var mListener: ANRSpyListener? = null
+    private var mShouldThrowException: Boolean = true
     private var TIME_OUT = 5000L
     //
 
@@ -24,35 +24,42 @@ class ANRSpyAgent constructor(builder:Builder): Thread() {
         this.mShouldThrowException = builder.getThrowException()
         this.TIME_OUT = builder.getTimeOout()
     }
+
     //Builder
-    class Builder(){
+    class Builder {
         //Params
-        private var mListener:ANRSpyListener? = null
-        private var mShouldThrowException:Boolean = true
+        private var mListener: ANRSpyListener? = null
+        private var mShouldThrowException: Boolean = true
         private var TIME_OUT = 5000L
+
         //
         fun setSpyListener(listener: ANRSpyListener) = apply { this.mListener = listener }
         fun getSpyListener() = this.mListener
 
-        fun setThrowException(throwexception:Boolean) = apply { this.mShouldThrowException = throwexception }
+        fun setThrowException(throwexception: Boolean) =
+            apply { this.mShouldThrowException = throwexception }
+
         fun getThrowException() = this.mShouldThrowException
 
-        fun setTimeOut(timeout:Long) = apply { TIME_OUT = timeout }
+        fun setTimeOut(timeout: Long) = apply { TIME_OUT = timeout }
         fun getTimeOout() = TIME_OUT
 
-        fun build():ANRSpyAgent = ANRSpyAgent(this)
+        fun build(): ANRSpyAgent = ANRSpyAgent(this)
     }
     //End builder
 
     override fun run() {
-        while (!isInterrupted){
+        while (!isInterrupted) {
             _timeWaited += INTERVAL
             mListener?.onWait(_timeWaited)
             mHandler.post(_mTesterWorker)
             sleep(INTERVAL)
-            if(_timeWaited > TIME_OUT){
-                mListener?.onAnrDetected(THREAD_TITLE+" Main thread blocked for: $_timeWaited ms",Looper.getMainLooper().thread.stackTrace)
-                if(mShouldThrowException){
+            if (_timeWaited > TIME_OUT) {
+                mListener?.onAnrDetected(
+                    THREAD_TITLE + " Main thread blocked for: $_timeWaited ms",
+                    Looper.getMainLooper().thread.stackTrace
+                )
+                if (mShouldThrowException) {
                     throwException(Looper.getMainLooper().thread.stackTrace)
                 }
             }

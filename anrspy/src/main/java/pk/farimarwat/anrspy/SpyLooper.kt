@@ -1,4 +1,4 @@
-package pk.farimarwat.AnrSpy
+package pk.farimarwat.anrspy
 
 import android.os.Looper
 import android.os.Message
@@ -8,6 +8,7 @@ import java.lang.reflect.Field
 
 
 class SpyLooper {
+
     val TAG = "Looper Spy"
     var messagesField: Field
     var nextField: Field
@@ -42,7 +43,7 @@ class SpyLooper {
     @Throws(IllegalAccessException::class)
     fun dumpMessages(message: Message?) {
         message?.let {
-            Log.w(TAG,"Message: ${message}")
+            Log.w(TAG, "Message: ${message}")
             val next = nextField[message] as Message?
             dumpMessages(next)
         }

@@ -4,17 +4,17 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import pk.farimarwat.AnrSpy.TAG
+import pk.farimarwat.anrspy.TAG
 
-class MyService:Service() {
+class MyService : Service() {
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        for(i in 0..10){
-            Log.i(TAG,"Number: $i")
+        for (i in 0..10) {
+            Log.i(TAG, "Number: $i")
             Thread.sleep(1000)
         }
         return START_STICKY
     }
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+
+    override fun onBind(intent: Intent?): IBinder? = null
 }
