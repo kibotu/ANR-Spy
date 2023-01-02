@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'pk.farimarwat.anrspyexample'
+    namespace 'net.kibotu.anrspy.demo'
     compileSdk 33
 
     defaultConfig {
-        applicationId "pk.farimarwat.anrspyexample"
+        applicationId "net.kibotu.anrspy.demo"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -23,15 +23,32 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = '11'
+        //## Hint: https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#default-methods-in-interfaces
+        //## Hint: "-Xjvm-default=all-compatibility" and "-Xjvm-default=all-compatibility" will also work.
+        freeCompilerArgs += [
+                "-Xjvm-default=all",
+                // disable linting for opt-in annotations
+                "-opt-in=kotlin.RequiresOptIn",
+                // disable compose version check
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+        ]
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.3.2'
+    }
+
     buildFeatures{
-        viewBinding true
+        compose true
     }
 }
 
@@ -40,7 +57,12 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    implementation 'androidx.activity:activity-compose:1.6.1'
+    implementation "androidx.compose.ui:ui:1.3.2"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.3.2"
+    implementation 'androidx.compose.material:material:1.3.1'
+
     implementation project(path: ':anrspy')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'

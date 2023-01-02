@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'pk.farimarwat.anrspy'
+    namespace 'net.kibotu.anrspy'
     compileSdk 33
 
     defaultConfig {
@@ -28,6 +28,7 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
+
 }
 
 dependencies {
