@@ -5,7 +5,9 @@ plugins {
 
 android {
     namespace 'net.kibotu.anrspy.demo'
+
     compileSdk 33
+    buildToolsVersion "33.0.1"
 
     defaultConfig {
         applicationId "net.kibotu.anrspy.demo"
