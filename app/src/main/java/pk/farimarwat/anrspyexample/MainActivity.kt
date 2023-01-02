@@ -7,10 +7,13 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import pk.farimarwat.anrspy.ANRSpyAgent
 import pk.farimarwat.anrspy.ANRSpyListener
-import pk.farimarwat.anrspy.TAG
 import pk.farimarwat.anrspyexample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        val TAG = "ANR Spy"
+    }
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
@@ -29,8 +32,8 @@ class MainActivity : AppCompatActivity() {
                     //Log.e(TAG,"Waited: $ms")
                 }
 
-                override fun onAnrStackTrace(stackstrace: Array<StackTraceElement>) {
-                    Log.e(TAG, "Stack:\n ${stackstrace}")
+                override fun onAnrStackTrace(stacksTrace: Array<StackTraceElement>) {
+                    Log.e(TAG, "Stack:\n ${stacksTrace}")
                 }
 
                 override fun onAnrDetected(details: String, stackTrace: Array<StackTraceElement>) {

@@ -5,44 +5,45 @@ import android.os.Looper
 
 class ANRSpyAgent constructor(builder: Builder) : Thread() {
 
-    //Params
-    private var mListener: ANRSpyListener? = null
-    private var mShouldThrowException: Boolean = true
-    private var TIME_OUT = 5000L
-    //
+    private val title = "[ ++ ANR Spy ++ ]"
 
+    private var listener: ANRSpyListener? = builder.getSpyListener()
 
-    private val INTERVAL = 500L
-    private val mHandler = Handler(Looper.getMainLooper())
-    private var _timeWaited = 0L
-    private val _mTesterWorker = Runnable {
-        _timeWaited = 0L
+    private var shouldThrowException: Boolean = builder.getThrowException()
+
+    private var timeout = builder.getTimeOut()
+
+    private val interval = 500L
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private var timeWaited = 0L
+
+    private val testerWorker = Runnable {
+        timeWaited = 0L
     }
 
-    init {
-        this.mListener = builder.getSpyListener()
-        this.mShouldThrowException = builder.getThrowException()
-        this.TIME_OUT = builder.getTimeOout()
-    }
-
-    //Builder
     class Builder {
-        //Params
-        private var mListener: ANRSpyListener? = null
-        private var mShouldThrowException: Boolean = true
-        private var TIME_OUT = 5000L
 
-        //
-        fun setSpyListener(listener: ANRSpyListener) = apply { this.mListener = listener }
-        fun getSpyListener() = this.mListener
+        //Params
+        private var listener: ANRSpyListener? = null
+
+        private var shouldThrowException: Boolean = true
+
+        private var timeout = 5000L
+
+        fun setSpyListener(listener: ANRSpyListener) = apply { this.listener = listener }
+
+        fun getSpyListener() = this.listener
 
         fun setThrowException(throwexception: Boolean) =
-            apply { this.mShouldThrowException = throwexception }
+            apply { this.shouldThrowException = throwexception }
 
-        fun getThrowException() = this.mShouldThrowException
+        fun getThrowException() = this.shouldThrowException
 
-        fun setTimeOut(timeout: Long) = apply { TIME_OUT = timeout }
-        fun getTimeOout() = TIME_OUT
+        fun setTimeOut(timeout: Long) = apply { this.timeout = timeout }
+
+        fun getTimeOut() = timeout
 
         fun build(): ANRSpyAgent = ANRSpyAgent(this)
     }
@@ -50,24 +51,23 @@ class ANRSpyAgent constructor(builder: Builder) : Thread() {
 
     override fun run() {
         while (!isInterrupted) {
-            _timeWaited += INTERVAL
-            mListener?.onWait(_timeWaited)
-            mHandler.post(_mTesterWorker)
-            sleep(INTERVAL)
-            if (_timeWaited > TIME_OUT) {
-                mListener?.onAnrDetected(
-                    THREAD_TITLE + " Main thread blocked for: $_timeWaited ms",
+            timeWaited += interval
+            listener?.onWait(timeWaited)
+            handler.post(testerWorker)
+            sleep(interval)
+            if (timeWaited > timeout) {
+                listener?.onAnrDetected(
+                    "$title Main thread blocked for: $timeWaited ms",
                     Looper.getMainLooper().thread.stackTrace
                 )
-                if (mShouldThrowException) {
+                if (shouldThrowException) {
                     throwException(Looper.getMainLooper().thread.stackTrace)
                 }
             }
         }
-
     }
 
     private fun throwException(stackTrace: Array<StackTraceElement>) {
-        throw ANRSpyException(THREAD_TITLE, stackTrace)
+        throw ANRSpyException(title, stackTrace)
     }
 }

@@ -9,9 +9,12 @@ import java.lang.reflect.Field
 
 class SpyLooper {
 
-    val TAG = "Looper Spy"
+    private val TAG = "Looper Spy"
+
     var messagesField: Field
+
     var nextField: Field
+
     var mainMessageQueue: MessageQueue
 
     init {

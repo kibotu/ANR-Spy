@@ -4,13 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import pk.farimarwat.anrspy.TAG
 
 class AirPlanMode : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         for (i in 0..10) {
-            Log.i(TAG, "Number: $i")
+            Log.i(MainActivity.TAG, "Number: $i")
             Thread.sleep(1000)
         }
     }

@@ -2,9 +2,9 @@ package pk.farimarwat.anrspy
 
 interface ANRSpyListener {
 
-    fun onWait(ms: Long) {}
+    fun onWait(ms: Long) = Unit
 
-    fun onAnrStackTrace(stackstrace: Array<StackTraceElement>) {}
+    fun onAnrStackTrace(stacksTrace: Array<StackTraceElement>) = Unit
 
-    fun onAnrDetected(details: String, stackTrace: Array<StackTraceElement>) {}
+    fun onAnrDetected(details: String, stackTrace: Array<StackTraceElement>) = Unit
 }
