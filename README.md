@@ -1,4 +1,4 @@
-### Android ANR Spy
+### Android ANR Spy [![](https://jitpack.io/v/kibotu/ANR-Spy.svg)](https://jitpack.io/#kibotu/ANR-Spy)
 Android ANR Spy is the most simplest library that helps android developers to detect ANRs.
 
 ### What is Android ANR (Application Not Responding)
@@ -12,11 +12,15 @@ Google recommends/suggests your app on play store. If your app raises too many A
 3. Service = 20 sec
 
 ## Android ANR Spy Library
+
 ### Implement:
 
+```groovy
+dependencies {
+    implementation 'com.github.kibotu:ANR-Spy:-SNAPSHOT'
+}
 ```
-implementation("io.github.farimarwat:anrspy:1.2")
-```
+
 ## Usage
 
 ### Start ANR Detector, e.g. in `MainActivity.onCreate`
