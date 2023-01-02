@@ -19,117 +19,37 @@ implementation("io.github.farimarwat:anrspy:1.2")
 ```
 ## Usage
 
-### Step 1: Create a Callback Object
-```
- //Anr Callback
-    private var mCallback = object : ANRSpyListener {
-        override fun onWait(ms: Long) {
-		//Total blocking time of main thread. 
-		//Can be used for doing any action e.g. if blocked time is more than 5 seconds then 
-		//restart the app to avoid raising ANR message because it will lead to down rank your app.
-        }
-
-        override fun onAnrStackTrace(stackstrace: Array<StackTraceElement>) {
-		//To  investigate ANR via stackstrace if occured.
-		//This method is deprecated and will  be removed in future
-        }
-
-        override fun onReportAvailable(methodList: List<MethodModel>) {
-		//Get instant report about annotated methods if touches main thread more than target time
-        }
-        override fun onAnrDetected(details: String, stackTrace: Array<StackTraceElement>) {
-		// Is triggered when ANR is detected
-        }
+### Start ANR Detector, e.g. in `MainActivity.onCreate`
+```kotlin
+startSpying {
+    shouldThrowException = true // default false
+    timeout = 5000L // time limit to detect ANR
+    onWait {
+        //Total blocking time of main thread. 
+        //Can be used for doing any action e.g. if blocked time is more than 5 seconds then 
+        //restart the app to avoid raising ANR message because it will lead to down rank your app.
+        Log.e(TAG, "Waited: $it")
     }
-```
-### Step 2: Create Instance
-```
-val anrSpyAgent = ANRSpyAgent.Builder()
-            .setTimeOut(5000)
-            .setSpyListener(mCallback)
-            .setThrowException(false)
-            .enableReportAnnotatedMethods(true)
-            .setFirebaseInstance(firebaseinstance)
-            .build()
-```
-### Step 3: Start Tracing
-```
-override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-	.....
-	......
-	anrSpyAgent.start()
-	
-}
-
-```
-
-### Builder Methods
-
-**setTimeOut(5000)**
-
-Time limit to detect ANR
-
-**setSpyListener()**
-
-Sets ANRSpyListener/callback methods
-
-**setThrowException(true)**
-
-Convert possible ANR to crash to figure out the line where ANR may be possible and close the app if true. Default is false
-
-**enableReportAnnotatedMethods(true)**
-
-This will generate report for annotated methods that you want to trace any where in the app. If the specified methods touches main thread for more than target time (default 5 secs), it will trigger **onReportAvailable** method of the callback to get details about the function e.g. Thread Name, Elapsed Time on main thread and function
-
-**Note:** If the annotated method is not running on main thread then there will  be no report generated. 
-
-**setFirebaseInstance(firebaseinstance)**
-
-To get logs similar to the mention above on firebase.
-Just set the instance for firebase analytics and all events will be collected as usuall to other events.
-All the events will be prefixed with: ANR_SPY_  to differenciate from other events on firebase
-
-### Annotations
-In case if any one want to trace a specific method to trace then there are two types of annotations available:
-
-**1. @TraceClass(traceAllMethods = false)**
-This annotatiion is applied to a class and takes one perameter. If the peramater traceAllMethods is set to true then all methods of the class will be traced on main thread. Default is true
-
-**Note:** If **traceAllMethods** is set to **false** and there is no specific annotated method then there will be no report generated.
-To trace all methods in MainActivity:
-
-*Example:*
-```
-@TraceClass(traceAllMethods = true)
-class MainActivity : AppCompatActivity() {
-	.......
+    onAnrDetected {
+        // Is triggered when ANR is detected
+        Log.e(TAG, "$it")
+    }
 }
 ```
 
-**2. @TraceMethod**
-To trace a specific method on main thread for ANR
+### License
+<pre>
+Copyright 2023 Jan Rabe
 
-*Example:*
-```
-@TraceMethod
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-}
-```
-**Note:** If the method is not running on main thread then there will be no report generated
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-## Change Log
-**version 1.2 (beta)**
-1. Annotation added to trace a specific method for ANR
-2. Store annotated methods report in firebase analytics
+   http://www.apache.org/licenses/LICENSE-2.0
 
-**version 1.0**
-Initial release
-
-## Support Me
-If you want to donate then you are welcome to buy me a cup of tea via **PATREON** because this encourages me to give you more free stuff
-and continue to  maintain this library
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</pre>

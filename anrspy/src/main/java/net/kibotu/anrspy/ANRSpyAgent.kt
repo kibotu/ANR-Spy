@@ -4,16 +4,18 @@ import android.os.Handler
 import android.os.Looper
 
 class ANRSpyAgent(
-    private var shouldThrowException: Boolean = false,
-    private var timeout: Long = 5000L,
     private val interval: Long = 500L,
-    private val handler: Handler = Handler(Looper.getMainLooper()),
-    private var timeWaited: Long = 0L,
+    private var timeout: Long = 5000L,
+    private var shouldThrowException: Boolean = false,
     private var onWait: ((ms: Long) -> Unit)? = null,
     private var onAnrDetected: ((exception: ANRSpyException) -> Unit)? = null
 ) : Thread() {
 
+    private val handler: Handler by lazy { Handler(Looper.getMainLooper()) }
+
     private val testerWorker: Runnable = Runnable { timeWaited = 0L }
+
+    private var timeWaited: Long = 0L
 
     override fun run() {
         while (!isInterrupted) {
@@ -42,6 +44,8 @@ class ANRSpyAgent(
 
         var timeout = 5000L
 
+        var interval = 500L
+
         private var onWait: ((ms: Long) -> Unit)? = null
 
         private var onAnrDetected: ((exception: ANRSpyException) -> Unit)? =
@@ -56,8 +60,11 @@ class ANRSpyAgent(
         }
 
         fun build(): ANRSpyAgent = ANRSpyAgent(
+            interval = interval,
+            timeout = timeout,
             shouldThrowException = shouldThrowException,
-            timeout = timeout
+            onWait = onWait,
+            onAnrDetected = onAnrDetected
         )
     }
 
