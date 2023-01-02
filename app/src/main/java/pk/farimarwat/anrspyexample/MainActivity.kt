@@ -33,12 +33,12 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onAnrStackTrace(stacksTrace: Array<StackTraceElement>) {
-                    Log.e(TAG, "Stack:\n ${stacksTrace}")
+                    Log.e(TAG, "Stack:\n $stacksTrace")
                 }
 
                 override fun onAnrDetected(details: String, stackTrace: Array<StackTraceElement>) {
                     Log.e(TAG, details)
-                    Log.e(TAG, "${stackTrace}")
+                    Log.e(TAG, "$stackTrace")
                 }
             })
             .setThrowException(true)
