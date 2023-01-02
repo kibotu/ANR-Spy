@@ -1,47 +1,36 @@
 package net.kibotu.anrspy.demo.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
-private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+
+val AppLightColorScheme = lightColorScheme(
+    // M3 light Color parameters
+)
+val AppDarkColorScheme = darkColorScheme(
+    // M3 dark Color parameters
 )
 
-private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
-)
+val LocalCardElevation = staticCompositionLocalOf { Dp.Unspecified }
 
 @Composable
-fun AnrSpyDemoTheme(
+fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
+    val cardElevation = if (darkTheme) 4.dp else 0.dp
+    CompositionLocalProvider(LocalCardElevation provides cardElevation) {
+        val colorScheme = if (darkTheme) AppLightColorScheme else AppDarkColorScheme
+        MaterialTheme(
+            colorScheme = colorScheme,
+            content = content
+        )
     }
-
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
 }

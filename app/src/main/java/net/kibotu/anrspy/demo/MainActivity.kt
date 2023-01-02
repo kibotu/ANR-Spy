@@ -9,13 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import net.kibotu.anrspy.demo.theme.AnrSpyDemoTheme
+import net.kibotu.anrspy.demo.theme.AppTheme
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,10 +29,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            AnrSpyDemoTheme {
+            AppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                                 Thread.sleep(30000)
                             }
                         }) {
-                            Text(text = "Main")
+                            Text(text = "Crash Main Thread by ANR")
                         }
                         Button(onClick = {
                             this@MainActivity.startService(
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                                 )
                             )
                         }) {
-                            Text(text = "Service")
+                            Text(text = "Crash Service by ANR")
                         }
                     }
                 }
