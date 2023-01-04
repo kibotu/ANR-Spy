@@ -46,7 +46,7 @@ afterEvaluate {
                 from components.release
                 groupId = "com.github.kibotu"
                 artifactId = 'anrspy'
-                version = "1.0.0"
+                version = "1.1.0"
             }
         }
     }
