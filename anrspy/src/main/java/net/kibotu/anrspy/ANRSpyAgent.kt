@@ -95,6 +95,24 @@ class ANRSpyAgent(
     }
 }
 
+/**
+ *
+ *
+ * startSpying {
+ *
+ *     shouldThrowException = false
+ *     timeout = 5000L
+ *
+ *       onWait {
+ *          Log.e(TAG, "Waited: ${it.message}")
+ *       }
+ *
+ *     onAnrDetected {
+ *         logSinceStart()
+ *         Log.e(TAG, it.message, it)
+ *     }
+ * }
+ */
 fun startSpying(update: ANRSpyAgent.Builder.() -> Unit) {
     val builder = ANRSpyAgent.Builder()
     builder.update()
