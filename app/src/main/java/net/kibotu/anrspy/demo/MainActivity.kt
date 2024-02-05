@@ -3,7 +3,6 @@ package net.kibotu.anrspy.demo
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -16,14 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import net.kibotu.anrspy.demo.theme.AppTheme
-import net.kibotu.anrspy.startSpying
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        const val TAG = "ANR Spy"
-    }
-
     private lateinit var receiver: AirPlanMode
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         Button(onClick = {
                             for (i in 1..10) {
-                                Log.e(TAG, "Number: $i")
+                                Timber.v("Number: $i")
                                 Thread.sleep(30000)
                             }
                         }) {
@@ -68,19 +62,6 @@ class MainActivity : AppCompatActivity() {
             registerReceiver(receiver, it)
         }
 
-        startSpying {
-
-            shouldThrowException = true
-            timeout = 5000L
-
-            onWait {
-                Log.e(TAG, "Waited: $it")
-            }
-
-            onAnrDetected {
-                Log.e(TAG, "$it")
-            }
-        }
     }
 
     override fun onDestroy() {

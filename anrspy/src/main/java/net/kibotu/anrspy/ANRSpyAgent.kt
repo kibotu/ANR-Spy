@@ -29,7 +29,7 @@ class ANRSpyAgent(
             onWait?.invoke(timeWaited)
             handler.post(testerWorker)
             sleep(interval)
-            if (timeWaited > timeout) {
+            if (timeWaited >= timeout) {
 
                 // skip debugger
                 if (isDebuggerAttached) continue
