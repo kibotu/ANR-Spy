@@ -24,6 +24,4 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
-
-      - name: Deploy javadoc to Github Pages
-        uses: dev-vince/actions-publish-javadoc@v1.0.1
+        
