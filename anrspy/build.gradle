@@ -50,7 +50,6 @@ publishing {
         release(MavenPublication) {
             groupId = "com.github.kibotu"
             artifactId = 'anrspy'
-            version = "2.0.3"
             afterEvaluate {
                 from components.release
             }
