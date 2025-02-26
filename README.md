@@ -1,4 +1,4 @@
-### Android ANR Spy [![](https://jitpack.io/v/kibotu/ANR-Spy.svg)](https://jitpack.io/#kibotu/ANR-Spy)
+### Android ANR Spy [![Maven Central Version](https://img.shields.io/maven-central/v/net.kibotu/ANR-Spy)](https://central.sonatype.com/artifact/net.kibotu/ANR-Spy) [![](https://jitpack.io/v/kibotu/ANR-Spy.svg)](https://jitpack.io/#kibotu/ANR-Spy) [![Android CI](https://github.com/kibotu/ANR-Spy/actions/workflows/android.yml/badge.svg)](https://github.com/kibotu/ANR-Spy/actions/workflows/android.yml) [![API](https://img.shields.io/badge/Min%20API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21) [![API](https://img.shields.io/badge/Target%20API-35%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=35) [![API](https://img.shields.io/badge/Java-17-brightgreen.svg?style=flat)](https://www.oracle.com/java/technologies/javase/17all-relnotes.html) [![Gradle Version](https://img.shields.io/badge/gradle-8.12-green.svg)](https://docs.gradle.org/current/release-notes) [![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-green.svg)](https://kotlinlang.org/)
 Android ANR Spy is the most simplest library that helps android developers to detect ANRs.
 
 ### What is Android ANR (Application Not Responding)
@@ -13,11 +13,35 @@ Google recommends/suggests your app on play store. If your app raises too many A
 
 ## Android ANR Spy Library
 
-### Implement:
+# How to install
+
+## MavenCentral
+
+```groovy 
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    implementation 'net.kibotu:ANR-Spy:{latest-version}'
+}
+
+```
+
+## Jitpack
 
 ```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
 dependencies {
-    implementation 'com.github.kibotu:ANR-Spy:-SNAPSHOT'
+    implementation 'com.github.kibotu:ANR-Spy:{latest-version}'
 }
 ```
 
