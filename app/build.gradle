@@ -1,74 +1,108 @@
-plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-}
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 android {
-    namespace 'net.kibotu.anrspy.demo'
 
-    compileSdk 34
+    namespace 'net.kibotu.anrspy.demo'
+    compileSdk compileSdkVer
+    buildToolsVersion = buildToolsVer
 
     defaultConfig {
         applicationId "net.kibotu.anrspy.demo"
-        minSdk 21
-        targetSdk 34
-        versionCode 1
-        versionName "1.0"
-
+        minSdk minSdkVer
+        targetSdk targetSdkVer
+        versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        release {
+        debug {
+            pseudoLocalesEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled false
+            shrinkResources = false
+        }
+        release {
+            minifyEnabled true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-
-    compileOptions {
-        coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = '17'
-        //## Hint: https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#default-methods-in-interfaces
-        //## Hint: "-Xjvm-default=all-compatibility" and "-Xjvm-default=all-compatibility" will also work.
-        freeCompilerArgs += [
-                "-Xjvm-default=all",
-                // disable linting for opt-in annotations
-                "-opt-in=kotlin.RequiresOptIn",
-                // disable compose version check
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
-        ]
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.5.8'
     }
 
     buildFeatures {
         compose true
     }
+
+    // region java compile options
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // endregion
+
+    // region kotlin compile options
+
+    kotlinOptions {
+        jvmTarget = "17"
+        allWarningsAsErrors = false
+        kotlinOptions.verbose = true
+        freeCompilerArgs += [
+                "-Xjvm-default=all-compatibility"
+        ]
+    }
+
+    // endregion
+
+    // region lint options
+
+    lint {
+        disable 'TypographyFractions', 'TypographyQuotes', 'InvalidPackage'
+        enable 'RtlHardcoded', 'RtlCompat', 'RtlEnabled'
+        checkOnly 'NewApi', 'InlinedApi'
+        quiet true
+        abortOnError false
+        ignoreWarnings true
+        checkDependencies true
+        ignoreTestSources true
+        checkAllWarnings false
+    }
+
+    // endregion
+
+    // region exclude duplicated meta inf files
+
+    packagingOptions {
+        // DebugProbesKt.bin is used for java debugging (not needed for android)
+        // Hint: https://github.com/Kotlin/kotlinx.coroutines/issues/2274
+        exclude 'DebugProbesKt.bin'
+
+        excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        // https://stackoverflow.com/a/61893957/1006741
+        excludes -= "/META-INF/*.kotlin_module"
+    }
+
+    // endregion
 }
-
 dependencies {
-    coreLibraryDesugaring  "com.android.tools:desugar_jdk_libs:2.0.4"
-    implementation 'com.jakewharton.timber:timber:5.0.1'
-
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
-
-    implementation 'androidx.activity:activity-compose:1.8.2'
-    implementation "androidx.compose.ui:ui:1.6.0"
-    implementation "androidx.compose.ui:ui-tooling-preview:1.6.0"
-    implementation "androidx.compose.material3:material3:1.1.2"
-
+    coreLibraryDesugaring desugaring.jdk
     implementation project(path: ':anrspy')
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.timber
+    implementation libs.coreKtx
+    implementation libs.activityCompose
+    implementation libs.composeUi
+    implementation libs.composeUiToolingPreview
+    implementation libs.composeMaterial
 }

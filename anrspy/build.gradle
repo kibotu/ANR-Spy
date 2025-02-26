@@ -1,57 +1,116 @@
-plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
-    id 'maven-publish'
-}
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     namespace 'net.kibotu.anrspy'
-    compileSdk 34
+
+    compileSdk compileSdkVer
+    buildToolsVersion = buildToolsVer
 
     defaultConfig {
-        minSdk 21
-        targetSdk 34
+
+        minSdk minSdkVer
+        targetSdk targetSdkVer
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    // region java compile options
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
+
     compileOptions {
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
+    // endregion
+
+    // region kotlin compile options
+
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = "17"
+        allWarningsAsErrors = false
+        kotlinOptions.verbose = true
+        freeCompilerArgs += [
+                "-Xjvm-default=all-compatibility"
+        ]
     }
 
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
+    // endregion
+
+    // region lint options
+
+    lint {
+        disable 'TypographyFractions', 'TypographyQuotes', 'InvalidPackage'
+        enable 'RtlHardcoded', 'RtlCompat', 'RtlEnabled'
+        checkOnly 'NewApi', 'InlinedApi'
+        quiet true
+        abortOnError false
+        ignoreWarnings true
+        checkDependencies true
+        ignoreTestSources true
+        checkAllWarnings false
     }
+
+    // endregion
+
+    // region exclude duplicated meta inf files
+
+    packagingOptions {
+        // DebugProbesKt.bin is used for java debugging (not needed for android)
+        // Hint: https://github.com/Kotlin/kotlinx.coroutines/issues/2274
+        exclude 'DebugProbesKt.bin'
+
+        excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        // https://stackoverflow.com/a/61893957/1006741
+        excludes -= "/META-INF/*.kotlin_module"
+    }
+
+    // endregion
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    coreLibraryDesugaring desugaring.jdk
 }
 
+if (!isJitpack) {
+    apply plugin: 'com.vanniktech.maven.publish'
+    mavenPublishing {
+        publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, true)
+        signAllPublications()
+    }
+}
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = "com.github.kibotu"
-            artifactId = 'anrspy'
-            afterEvaluate {
-                from components.release
+if (isJitpack) {
+    apply plugin: 'maven-publish'
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = GROUP
+                artifactId = POM_ARTIFACT_ID
+                version = version
+                afterEvaluate {
+                    from components.release
+                }
             }
         }
     }
